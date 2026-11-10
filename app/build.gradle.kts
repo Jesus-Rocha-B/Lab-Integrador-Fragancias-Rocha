@@ -4,13 +4,13 @@ plugins {
 }
 
 android {
-    namespace = "com.example.fragancias"
+    namespace = "com.tecsup.fragancias"
     compileSdk {
         version = release(37)
     }
 
     defaultConfig {
-        applicationId = "com.example.fragancias"
+        applicationId = "com.tecsup.fragancias"
         minSdk = 24
         targetSdk = 37
         versionCode = 1
