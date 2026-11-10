@@ -17,6 +17,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -28,7 +29,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.tecsup.fragancias.domain.model.Item
 import com.tecsup.fragancias.ui.UiState
 import com.tecsup.fragancias.ui.components.Cargando
@@ -38,57 +38,79 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListaScreen(
-    viewModel: ListaViewModel = viewModel(),
+    viewModel: ListaViewModel,
     onItemClick: (Int) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val estado by viewModel.estado.collectAsStateWithLifecycle()
+    val aviso by viewModel.aviso.collectAsStateWithLifecycle()
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text(text = "Fragancias") }
+                title = { Text(text = "Fragancias") },
+                actions = {
+                    TextButton(onClick = viewModel::refrescar) {
+                        Text(text = "Refrescar")
+                    }
+                }
             )
         }
     ) { innerPadding ->
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            when (val actual = estado) {
-                is UiState.Cargando -> Cargando()
-                is UiState.Error -> ErrorView(
-                    mensaje = actual.mensaje,
-                    onReintentar = viewModel::cargarDatosPrueba
-                )
-                is UiState.Exito -> {
-                    if (actual.datos.isEmpty()) {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "No hay fragancias disponibles",
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                        }
-                    } else {
-                        LazyColumn(
-                            modifier = Modifier.fillMaxSize(),
-                            contentPadding = PaddingValues(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            items(
-                                items = actual.datos,
-                                key = { it.id }
-                            ) { fragancia ->
-                                FraganciaCard(
-                                    item = fragancia,
-                                    onClick = { onItemClick(fragancia.id) },
-                                    onAlternarFavorito = { viewModel.alternarFavorito(fragancia.id) }
+            aviso?.let { mensajeAviso ->
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    color = MaterialTheme.colorScheme.secondaryContainer
+                ) {
+                    Text(
+                        text = mensajeAviso,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                }
+            }
+
+            Box(modifier = Modifier.fillMaxSize()) {
+                when (val actual = estado) {
+                    is UiState.Cargando -> Cargando()
+                    is UiState.Error -> ErrorView(
+                        mensaje = actual.mensaje,
+                        onReintentar = viewModel::refrescar
+                    )
+                    is UiState.Exito -> {
+                        if (actual.datos.isEmpty()) {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "No hay fragancias disponibles",
+                                    style = MaterialTheme.typography.bodyLarge
                                 )
+                            }
+                        } else {
+                            LazyColumn(
+                                modifier = Modifier.fillMaxSize(),
+                                contentPadding = PaddingValues(16.dp),
+                                verticalArrangement = Arrangement.spacedBy(12.dp)
+                            ) {
+                                items(
+                                    items = actual.datos,
+                                    key = { it.id }
+                                ) { fragancia ->
+                                    FraganciaCard(
+                                        item = fragancia,
+                                        onClick = { onItemClick(fragancia.id) },
+                                        onAlternarFavorito = { viewModel.alternarFavorito(fragancia.id) }
+                                    )
+                                }
                             }
                         }
                     }
