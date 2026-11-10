@@ -18,6 +18,11 @@ data class ItemDto(
     val rating: Double = 0.0,
     val stock: Int = 0,
     val brand: String? = null,
+    val sku: String = "",
+    val availabilityStatus: String = "",
+    val warrantyInformation: String = "",
+    val shippingInformation: String = "",
+    val returnPolicy: String = "",
     val thumbnail: String? = null,
     val images: List<String> = emptyList()
 )

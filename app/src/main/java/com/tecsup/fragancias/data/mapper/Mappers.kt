@@ -12,5 +12,11 @@ fun ItemDto.aModelo(esFavorito: Boolean = false): Item = Item(
     stock = stock,
     descripcion = description,
     imagenUrl = thumbnail ?: images.firstOrNull(),
-    esFavorito = esFavorito
+    esFavorito = esFavorito,
+    descuento = discountPercentage,
+    categoria = category,
+    disponibilidad = availabilityStatus,
+    garantia = warrantyInformation,
+    envio = shippingInformation,
+    politicaDevolucion = returnPolicy
 )

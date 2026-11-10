@@ -9,5 +9,11 @@ data class Item(
     val stock: Int,
     val descripcion: String,
     val imagenUrl: String?,
-    val esFavorito: Boolean = false
+    val esFavorito: Boolean = false,
+    val descuento: Double = 0.0,
+    val categoria: String = "",
+    val disponibilidad: String = "",
+    val garantia: String = "",
+    val envio: String = "",
+    val politicaDevolucion: String = ""
 )

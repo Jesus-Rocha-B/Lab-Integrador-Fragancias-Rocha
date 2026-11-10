@@ -4,9 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.tecsup.fragancias.ui.lista.ListaScreen
-import com.tecsup.fragancias.ui.lista.ListaViewModel
+import com.tecsup.fragancias.ui.navigation.AppNav
 import com.tecsup.fragancias.ui.theme.FraganciasTheme
 
 class MainActivity : ComponentActivity() {
@@ -18,10 +16,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             FraganciasTheme {
-                val listaViewModel: ListaViewModel = viewModel(
-                    factory = ListaViewModel.factory(appContainer)
-                )
-                ListaScreen(viewModel = listaViewModel)
+                AppNav(appContainer = appContainer)
             }
         }
     }
