@@ -22,7 +22,7 @@ fun ItemDto.aEntity(esFavorito: Boolean = false): ItemEntity = ItemEntity(
     politicaDevolucion = returnPolicy
 )
 
-fun ItemEntity.aModelo(): Item = Item(
+fun ItemEntity.aModelo(esFavorito: Boolean = this.esFavorito): Item = Item(
     id = id,
     titulo = titulo,
     marca = marca,
