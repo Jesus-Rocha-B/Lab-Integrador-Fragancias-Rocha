@@ -11,7 +11,7 @@ import androidx.room.RoomDatabase
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun aitemDao(): ItemDao
+    abstract fun itemDao(): ItemDao
 
     companion object {
         @Volatile

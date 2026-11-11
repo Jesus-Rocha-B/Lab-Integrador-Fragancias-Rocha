@@ -9,7 +9,7 @@ import com.tecsup.fragancias.ui.theme.FraganciasTheme
 
 class MainActivity : ComponentActivity() {
 
-    private val appContainer by lazy { AppContainer() }
+    private val appContainer by lazy { AppContainer(applicationContext) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
