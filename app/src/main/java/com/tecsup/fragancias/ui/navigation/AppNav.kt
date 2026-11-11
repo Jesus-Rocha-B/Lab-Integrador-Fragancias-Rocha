@@ -1,5 +1,9 @@
 package com.tecsup.fragancias.ui.navigation
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -23,6 +27,7 @@ import com.tecsup.fragancias.ui.lista.ListaScreen
 import com.tecsup.fragancias.ui.lista.ListaViewModel
 import com.tecsup.fragancias.ui.login.LoginScreen
 import com.tecsup.fragancias.ui.login.LoginViewModel
+import com.tecsup.fragancias.ui.login.PerfilScreen
 import com.tecsup.fragancias.ui.login.RegistroScreen
 import com.tecsup.fragancias.ui.login.RegistroViewModel
 import com.tecsup.fragancias.ui.login.SplashScreen
@@ -35,6 +40,7 @@ fun AppNav(appContainer: AppContainer) {
     val estadoLogin by loginViewModel.estado.collectAsStateWithLifecycle()
     val verificando by loginViewModel.verificando.collectAsStateWithLifecycle()
     val splashListo by loginViewModel.splashListo.collectAsStateWithLifecycle()
+    val claveSesion by loginViewModel.claveSesion.collectAsStateWithLifecycle()
 
     if (!splashListo || verificando) {
         SplashScreen()
@@ -46,7 +52,31 @@ fun AppNav(appContainer: AppContainer) {
         val authNavController = rememberNavController()
         NavHost(
             navController = authNavController,
-            startDestination = "login"
+            startDestination = "login",
+            enterTransition = {
+                slideIntoContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Left,
+                    tween(280)
+                ) + fadeIn(tween(280))
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Left,
+                    tween(240)
+                ) + fadeOut(tween(240))
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Right,
+                    tween(280)
+                ) + fadeIn(tween(280))
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Right,
+                    tween(240)
+                ) + fadeOut(tween(240))
+            }
         ) {
             composable("login") {
                 LoginScreen(
@@ -76,9 +106,22 @@ fun AppNav(appContainer: AppContainer) {
     val esAdmin = sesion.rol == Rol.ADMIN
     val navController = rememberNavController()
 
+    fun navegarTab(destino: String) {
+        if (destino == "admin" && !esAdmin) return
+        navController.navigate(destino) {
+            popUpTo("lista") {
+                saveState = true
+            }
+            launchSingleTop = true
+            restoreState = true
+        }
+    }
+
     NavHost(
         navController = navController,
-        startDestination = "lista"
+        startDestination = "lista",
+        enterTransition = { fadeIn(tween(220)) },
+        exitTransition = { fadeOut(tween(180)) }
     ) {
         composable("lista") {
             val listaViewModel: ListaViewModel = viewModel(
@@ -90,15 +133,7 @@ fun AppNav(appContainer: AppContainer) {
                 onItemClick = { id ->
                     navController.navigate("detalle/$id")
                 },
-                onFavoritosClick = {
-                    navController.navigate("favoritos")
-                },
-                onAdminClick = {
-                    if (esAdmin) {
-                        navController.navigate("admin")
-                    }
-                },
-                onCerrarSesion = loginViewModel::cerrarSesion
+                onNavegarTab = ::navegarTab
             )
         }
         composable("favoritos") {
@@ -107,10 +142,19 @@ fun AppNav(appContainer: AppContainer) {
             )
             FavoritosScreen(
                 viewModel = favoritosViewModel,
+                esAdmin = esAdmin,
                 onItemClick = { id ->
                     navController.navigate("detalle/$id")
                 },
-                onVolver = { navController.popBackStack() }
+                onNavegarTab = ::navegarTab
+            )
+        }
+        composable("perfil") {
+            PerfilScreen(
+                sesion = sesion,
+                claveSesion = claveSesion,
+                onNavegarTab = ::navegarTab,
+                onCerrarSesion = loginViewModel::cerrarSesion
             )
         }
         composable("admin") {
@@ -121,8 +165,7 @@ fun AppNav(appContainer: AppContainer) {
                 AdminScreen(
                     viewModel = adminViewModel,
                     correoUsuario = sesion.correo,
-                    onVolver = { navController.popBackStack() },
-                    onCerrarSesion = loginViewModel::cerrarSesion
+                    onNavegarTab = ::navegarTab
                 )
             } else {
                 LaunchedEffect(Unit) {
@@ -132,7 +175,25 @@ fun AppNav(appContainer: AppContainer) {
         }
         composable(
             route = "detalle/{itemId}",
-            arguments = listOf(navArgument("itemId") { type = NavType.IntType })
+            arguments = listOf(navArgument("itemId") { type = NavType.IntType }),
+            enterTransition = {
+                slideIntoContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Left,
+                    tween(300)
+                ) + fadeIn(tween(300))
+            },
+            exitTransition = {
+                fadeOut(tween(200))
+            },
+            popEnterTransition = {
+                fadeIn(tween(220))
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Right,
+                    tween(280)
+                ) + fadeOut(tween(280))
+            }
         ) { backStackEntry ->
             val itemId = backStackEntry.arguments?.getInt("itemId") ?: 0
             val detalleViewModel: DetalleViewModel = viewModel(
