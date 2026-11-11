@@ -4,7 +4,7 @@ import com.tecsup.fragancias.data.local.ItemEntity
 import com.tecsup.fragancias.data.remote.dto.ItemDto
 import com.tecsup.fragancias.domain.model.Item
 
-fun ItemDto.SaEntity(esFavorito: Boolean = false): ItemEntity = ItemEntity(
+fun ItemDto.aEntity(esFavorito: Boolean = false): ItemEntity = ItemEntity(
     id = id,
     titulo = title,
     marca = brand.orEmpty(),

@@ -10,6 +10,8 @@ import androidx.navigation.navArgument
 import com.tecsup.fragancias.AppContainer
 import com.tecsup.fragancias.ui.detalle.DetalleScreen
 import com.tecsup.fragancias.ui.detalle.DetalleViewModel
+import com.tecsup.fragancias.ui.favoritos.FavoritosScreen
+import com.tecsup.fragancias.ui.favoritos.FavoritosViewModel
 import com.tecsup.fragancias.ui.lista.ListaScreen
 import com.tecsup.fragancias.ui.lista.ListaViewModel
 
@@ -29,7 +31,22 @@ fun AppNav(appContainer: AppContainer) {
                 viewModel = listaViewModel,
                 onItemClick = { id ->
                     navController.navigate("detalle/$id")
+                },
+                onFavoritosClick = {
+                    navController.navigate("favoritos")
                 }
+            )
+        }
+        composable("favoritos") {
+            val favoritosViewModel: FavoritosViewModel = viewModel(
+                factory = FavoritosViewModel.factory(appContainer)
+            )
+            FavoritosScreen(
+                viewModel = favoritosViewModel,
+                onItemClick = { id ->
+                    navController.navigate("detalle/$id")
+                },
+                onVolver = { navController.popBackStack() }
             )
         }
         composable(
