@@ -37,8 +37,10 @@ import com.tecsup.fragancias.ui.components.FraganciaCard
 @Composable
 fun ListaScreen(
     viewModel: ListaViewModel,
+    esAdmin: Boolean = false,
     onItemClick: (Int) -> Unit = {},
     onFavoritosClick: () -> Unit = {},
+    onAdminClick: () -> Unit = {},
     onCerrarSesion: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
@@ -77,6 +79,11 @@ fun ListaScreen(
                     }
                     TextButton(onClick = onFavoritosClick) {
                         Text(text = "Favoritos")
+                    }
+                    if (esAdmin) {
+                        TextButton(onClick = onAdminClick) {
+                            Text(text = "Admin")
+                        }
                     }
                 }
             }

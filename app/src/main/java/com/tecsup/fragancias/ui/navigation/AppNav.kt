@@ -1,6 +1,7 @@
 package com.tecsup.fragancias.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -10,7 +11,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.tecsup.fragancias.AppContainer
+import com.tecsup.fragancias.domain.model.Rol
 import com.tecsup.fragancias.ui.UiState
+import com.tecsup.fragancias.ui.admin.AdminScreen
+import com.tecsup.fragancias.ui.admin.AdminViewModel
 import com.tecsup.fragancias.ui.components.Cargando
 import com.tecsup.fragancias.ui.detalle.DetalleScreen
 import com.tecsup.fragancias.ui.detalle.DetalleViewModel
@@ -40,6 +44,7 @@ fun AppNav(appContainer: AppContainer) {
         return
     }
 
+    val esAdmin = sesion.rol == Rol.ADMIN
     val navController = rememberNavController()
 
     NavHost(
@@ -52,11 +57,17 @@ fun AppNav(appContainer: AppContainer) {
             )
             ListaScreen(
                 viewModel = listaViewModel,
+                esAdmin = esAdmin,
                 onItemClick = { id ->
                     navController.navigate("detalle/$id")
                 },
                 onFavoritosClick = {
                     navController.navigate("favoritos")
+                },
+                onAdminClick = {
+                    if (esAdmin) {
+                        navController.navigate("admin")
+                    }
                 },
                 onCerrarSesion = loginViewModel::cerrarSesion
             )
@@ -72,6 +83,23 @@ fun AppNav(appContainer: AppContainer) {
                 },
                 onVolver = { navController.popBackStack() }
             )
+        }
+        composable("admin") {
+            if (esAdmin) {
+                val adminViewModel: AdminViewModel = viewModel(
+                    factory = AdminViewModel.factory(appContainer)
+                )
+                AdminScreen(
+                    viewModel = adminViewModel,
+                    correoUsuario = sesion.correo,
+                    onVolver = { navController.popBackStack() },
+                    onCerrarSesion = loginViewModel::cerrarSesion
+                )
+            } else {
+                LaunchedEffect(Unit) {
+                    navController.popBackStack()
+                }
+            }
         }
         composable(
             route = "detalle/{itemId}",
