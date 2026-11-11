@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -24,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.tecsup.fragancias.ui.UiState
@@ -37,6 +39,7 @@ fun ListaScreen(
     viewModel: ListaViewModel,
     onItemClick: (Int) -> Unit = {},
     onFavoritosClick: () -> Unit = {},
+    onCerrarSesion: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val estado by viewModel.estado.collectAsStateWithLifecycle()
@@ -48,14 +51,35 @@ fun ListaScreen(
             TopAppBar(
                 title = { Text(text = "Fragancias") },
                 actions = {
-                    TextButton(onClick = onFavoritosClick) {
-                        Text(text = "Favoritos")
-                    }
                     TextButton(onClick = viewModel::refrescar) {
                         Text(text = "Refrescar")
                     }
+                    TextButton(onClick = onCerrarSesion) {
+                        Text(text = "Salir")
+                    }
                 }
             )
+        },
+        bottomBar = {
+            Surface(tonalElevation = 3.dp) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .navigationBarsPadding()
+                        .padding(vertical = 4.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    TextButton(onClick = {}) {
+                        Text(
+                            text = "Catálogo",
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    TextButton(onClick = onFavoritosClick) {
+                        Text(text = "Favoritos")
+                    }
+                }
+            }
         }
     ) { innerPadding ->
         Column(
