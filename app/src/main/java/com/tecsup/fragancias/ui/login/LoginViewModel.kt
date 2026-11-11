@@ -30,6 +30,9 @@ class LoginViewModel(
     private val _clave = MutableStateFlow("")
     val clave: StateFlow<String> = _clave.asStateFlow()
 
+    private val _claveSesion = MutableStateFlow<String?>(null)
+    val claveSesion: StateFlow<String?> = _claveSesion.asStateFlow()
+
     private val _verificando = MutableStateFlow(true)
     val verificando: StateFlow<Boolean> = _verificando.asStateFlow()
 
@@ -80,6 +83,7 @@ class LoginViewModel(
             _estado.value = UiState.Cargando
             auth.iniciarSesion(correoLimpio, claveActual)
                 .onSuccess { sesion ->
+                    _claveSesion.value = claveActual
                     _clave.value = ""
                     _estado.value = UiState.Exito(sesion)
                 }
@@ -93,6 +97,7 @@ class LoginViewModel(
         auth.cerrarSesion()
         _correo.value = ""
         _clave.value = ""
+        _claveSesion.value = null
         _estado.value = UiState.Exito(null)
     }
 

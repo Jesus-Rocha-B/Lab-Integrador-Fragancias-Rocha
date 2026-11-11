@@ -43,9 +43,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -60,6 +57,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.tecsup.fragancias.R
 import com.tecsup.fragancias.ui.UiState
+import com.tecsup.fragancias.ui.components.FondoCollageMarcas
 import com.tecsup.fragancias.ui.theme.BlancoPuro
 import com.tecsup.fragancias.ui.theme.BordeOscuro
 import com.tecsup.fragancias.ui.theme.DoradoChampan
@@ -269,41 +267,14 @@ fun LoginScreen(
 
 @Composable
 private fun HeroCollageMarcas() {
-    val inversionOscura = ColorMatrix(
-        floatArrayOf(
-            -1f, 0f, 0f, 0f, 240f,
-            0f, -1f, 0f, 0f, 240f,
-            0f, 0f, -1f, 0f, 240f,
-            0f, 0f, 0f, 1f, 0f
-        )
-    )
-
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(265.dp)
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.collage_marcas),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            alpha = 0.28f,
-            colorFilter = ColorFilter.colorMatrix(inversionOscura),
+        FondoCollageMarcas(
+            colorFondoInferior = NegroObsidiana,
             modifier = Modifier.fillMaxSize()
-        )
-
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            NegroObsidiana.copy(alpha = 0.35f),
-                            NegroObsidiana.copy(alpha = 0.72f),
-                            NegroObsidiana
-                        )
-                    )
-                )
         )
 
         Column(
