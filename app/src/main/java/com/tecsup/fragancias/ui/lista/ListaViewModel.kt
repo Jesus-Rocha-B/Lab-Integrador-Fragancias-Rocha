@@ -27,11 +27,16 @@ class ListaViewModel(
     val aviso: StateFlow<String?> = _aviso.asStateFlow()
 
     private var refrescoTerminado = false
+    private var ultimoRefrescoExitoso = false
 
     init {
         viewModelScope.launch {
             repo.items.collect { lista ->
-                if (lista.isNotEmpty() || refrescoTerminado) {
+                if (
+                    lista.isNotEmpty() ||
+                    (refrescoTerminado && ultimoRefrescoExitoso) ||
+                    (_estado.value is UiState.Exito && lista.isEmpty())
+                ) {
                     _estado.value = UiState.Exito(lista)
                 }
             }
@@ -41,13 +46,15 @@ class ListaViewModel(
 
     fun refrescar() {
         viewModelScope.launch {
-            if (_estado.value is UiState.Error) {
+            val actual = _estado.value
+            if (actual is UiState.Error || (actual is UiState.Exito && actual.datos.isEmpty())) {
                 _estado.value = UiState.Cargando
             }
             val resultado = repo.refrescar()
             refrescoTerminado = true
             resultado
                 .onSuccess { n ->
+                    ultimoRefrescoExitoso = true
                     if (_estado.value is UiState.Cargando) {
                         _estado.value = UiState.Exito(emptyList())
                     }
@@ -55,7 +62,9 @@ class ListaViewModel(
                     notificador.mostrar("Datos actualizados", "Se guardaron $n elementos")
                 }
                 .onFailure { e ->
+                    ultimoRefrescoExitoso = false
                     if (repo.cantidadGuardada() == 0) {
+                        _aviso.value = null
                         _estado.value = UiState.Error(mensajeDe(e))
                     } else {
                         _aviso.value = "Sin conexión: mostrando datos guardados"
