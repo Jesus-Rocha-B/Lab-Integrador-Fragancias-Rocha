@@ -11,8 +11,9 @@ import com.tecsup.fragancias.notification.Notificador
 import com.tecsup.fragancias.notification.NotificadorAndroid
 
 class AppContainer(context: Context) {
+    private val appContext = context.applicationContext
     private val apiService = RetrofitClient.apiService
-    private val database = AppDatabase.obtener(context)
+    private val database = AppDatabase.obtener(appContext)
 
     val authRepository: AuthRepository by lazy {
         FirebaseAuthRepository()
@@ -26,6 +27,6 @@ class AppContainer(context: Context) {
     }
 
     val notificador: Notificador by lazy {
-        NotificadorAndroid()
+        NotificadorAndroid(appContext)
     }
 }
