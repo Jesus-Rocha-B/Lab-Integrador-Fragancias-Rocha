@@ -10,6 +10,7 @@ import com.tecsup.fragancias.AppContainer
 import com.tecsup.fragancias.data.auth.AuthRepository
 import com.tecsup.fragancias.domain.model.Sesion
 import com.tecsup.fragancias.ui.UiState
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,11 +33,18 @@ class LoginViewModel(
     private val _verificando = MutableStateFlow(true)
     val verificando: StateFlow<Boolean> = _verificando.asStateFlow()
 
+    private val _splashListo = MutableStateFlow(false)
+    val splashListo: StateFlow<Boolean> = _splashListo.asStateFlow()
+
     init {
         viewModelScope.launch {
             val sesion = auth.sesionActual()
             _estado.value = UiState.Exito(sesion)
             _verificando.value = false
+        }
+        viewModelScope.launch {
+            delay(1400)
+            _splashListo.value = true
         }
     }
 
@@ -52,6 +60,12 @@ class LoginViewModel(
         if (_estado.value is UiState.Error) {
             _estado.value = UiState.Exito(null)
         }
+    }
+
+    fun prepararCorreo(correoNuevo: String) {
+        _correo.value = correoNuevo.trim()
+        _clave.value = ""
+        _estado.value = UiState.Exito(null)
     }
 
     fun iniciarSesion() {

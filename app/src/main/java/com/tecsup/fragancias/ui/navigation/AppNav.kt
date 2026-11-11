@@ -15,7 +15,6 @@ import com.tecsup.fragancias.domain.model.Rol
 import com.tecsup.fragancias.ui.UiState
 import com.tecsup.fragancias.ui.admin.AdminScreen
 import com.tecsup.fragancias.ui.admin.AdminViewModel
-import com.tecsup.fragancias.ui.components.Cargando
 import com.tecsup.fragancias.ui.detalle.DetalleScreen
 import com.tecsup.fragancias.ui.detalle.DetalleViewModel
 import com.tecsup.fragancias.ui.favoritos.FavoritosScreen
@@ -24,6 +23,9 @@ import com.tecsup.fragancias.ui.lista.ListaScreen
 import com.tecsup.fragancias.ui.lista.ListaViewModel
 import com.tecsup.fragancias.ui.login.LoginScreen
 import com.tecsup.fragancias.ui.login.LoginViewModel
+import com.tecsup.fragancias.ui.login.RegistroScreen
+import com.tecsup.fragancias.ui.login.RegistroViewModel
+import com.tecsup.fragancias.ui.login.SplashScreen
 
 @Composable
 fun AppNav(appContainer: AppContainer) {
@@ -32,15 +34,42 @@ fun AppNav(appContainer: AppContainer) {
     )
     val estadoLogin by loginViewModel.estado.collectAsStateWithLifecycle()
     val verificando by loginViewModel.verificando.collectAsStateWithLifecycle()
+    val splashListo by loginViewModel.splashListo.collectAsStateWithLifecycle()
 
-    if (verificando) {
-        Cargando()
+    if (!splashListo || verificando) {
+        SplashScreen()
         return
     }
 
     val sesion = (estadoLogin as? UiState.Exito)?.datos
     if (sesion == null) {
-        LoginScreen(viewModel = loginViewModel)
+        val authNavController = rememberNavController()
+        NavHost(
+            navController = authNavController,
+            startDestination = "login"
+        ) {
+            composable("login") {
+                LoginScreen(
+                    viewModel = loginViewModel,
+                    onIrARegistro = {
+                        authNavController.navigate("registro")
+                    }
+                )
+            }
+            composable("registro") {
+                val registroViewModel: RegistroViewModel = viewModel(
+                    factory = RegistroViewModel.factory(appContainer)
+                )
+                RegistroScreen(
+                    viewModel = registroViewModel,
+                    onVolver = { authNavController.popBackStack() },
+                    onRegistroExitoso = { correoRegistrado ->
+                        loginViewModel.prepararCorreo(correoRegistrado)
+                        authNavController.popBackStack()
+                    }
+                )
+            }
+        }
         return
     }
 
