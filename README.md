@@ -112,13 +112,15 @@ Ubicadas en `app/src/test/java/com/tecsup/fragancias/ui/lista/ListaViewModelTest
 
 ## Capturas de pantalla
 
-| Splash y Login | Catálogo y Filtros | Detalle y Perfil | Panel Admin |
-| --- | --- | --- | --- |
-| *(Agregar capturas en `docs/`)* | *(Agregar capturas en `docs/`)* | *(Agregar capturas en `docs/`)* | *(Agregar capturas en `docs/`)* |
+| 01. Inicio de sesión | 02. Catálogo y Filtros | 03. Perfil de Usuario | 04. Consola Admin |
+| :---: | :---: | :---: | :---: |
+| <img src="docs/screenshots/01_login.jpg" width="220" alt="Login con collage y campos validados" /> | <img src="docs/screenshots/02_catalogo.jpg" width="220" alt="Catálogo de fragancias con buscador y filtros" /> | <img src="docs/screenshots/03_perfil.jpg" width="220" alt="Perfil con portada, avatar y credenciales seguras" /> | <img src="docs/screenshots/04_admin.jpg" width="220" alt="Panel Admin con métricas y sincronización" /> |
 
 ---
 
 ## Autor y trazabilidad
 
+- **Estudiante:** Jesús Rocha (`Jesus-Rocha-B`)
+- **Tema / Variante:** Productos — `fragrances` (DummyJSON)
 - **Repositorio:** `https://github.com/Jesus-Rocha-B/Lab-Integrador-Fragancias-Rocha.git`
 - **Bitácora de prompts con IA:** ver [`PROMPTS.md`](PROMPTS.md)
